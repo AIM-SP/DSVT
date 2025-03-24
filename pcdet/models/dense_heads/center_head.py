@@ -342,7 +342,9 @@ class CenterHead(nn.Module):
             )
 
             for k, final_dict in enumerate(final_pred_dicts):
-                final_dict['pred_labels'] = self.class_id_mapping_each_head[idx][final_dict['pred_labels'].long()]
+#                final_dict['pred_labels'] = self.class_id_mapping_each_head[idx][final_dict['pred_labels'].long()]
+                label_map = self.class_id_mapping_each_head[idx].to(final_dict['pred_labels'].device)
+                final_dict['pred_labels'] = label_map[final_dict['pred_labels'].long()]
 
                 if post_process_cfg.get('USE_IOU_TO_RECTIFY_SCORE', False) and 'pred_iou' in final_dict:
                     pred_iou = torch.clamp(final_dict['pred_iou'], min=0, max=1.0)
