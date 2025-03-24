@@ -89,6 +89,10 @@ class DynamicPillarVFE(VFETemplate):
 
     def forward(self, batch_dict, **kwargs):
         points = batch_dict['points'] # (batch_idx, x, y, z, i, e)
+        
+        device = points.device
+        point_cloud_range = self.point_cloud_range.to(device)
+        voxel_size = self.voxel_size.to(device)
 
         points_coords = torch.floor((points[:, [1,2]] - self.point_cloud_range[[0,1]]) / self.voxel_size[[0,1]]).int()
         mask = ((points_coords >= 0) & (points_coords < self.grid_size[[0,1]])).all(dim=1)
@@ -183,8 +187,16 @@ class DynamicPillarVFE_3d(VFETemplate):
     def forward(self, batch_dict, **kwargs):
         points = batch_dict['points'] # (batch_idx, x, y, z, i, e)
 
-        points_coords = torch.floor((points[:, [1,2,3]] - self.point_cloud_range[[0,1,2]]) / self.voxel_size[[0,1,2]]).int()
-        mask = ((points_coords >= 0) & (points_coords < self.grid_size[[0,1,2]])).all(dim=1)
+        device = points.device
+
+        point_cloud_range = self.point_cloud_range.to(device)
+        voxel_size = self.voxel_size.to(device)
+        grid_size = self.grid_size.to(device)
+
+        points_coords = torch.floor((points[:, [1,2,3]] - point_cloud_range[[0,1,2]]) / voxel_size[[0,1,2]]).int()
+        mask = ((points_coords >= 0) & (points_coords < grid_size[[0,1,2]])).all(dim=1)
+        #points_coords = torch.floor((points[:, [1,2,3]] - self.point_cloud_range[[0,1,2]]) / self.voxel_size[[0,1,2]]).int()
+        #mask = ((points_coords >= 0) & (points_coords < self.grid_size[[0,1,2]])).all(dim=1)
         points = points[mask]
         points_coords = points_coords[mask]
         points_xyz = points[:, [1, 2, 3]].contiguous()

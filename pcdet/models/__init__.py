@@ -20,7 +20,10 @@ def build_network(model_cfg, num_class, dataset):
     return model
 
 
-def load_data_to_gpu(batch_dict):
+def load_data_to_gpu(batch_dict, device=None):
+    if device is None:
+        device = torch.device('cuda:0')  # fallback to cuda:0 if not specified
+
     for key, val in batch_dict.items():
         if not isinstance(val, np.ndarray):
             continue
@@ -40,7 +43,8 @@ def model_fn_decorator():
     ModelReturn = namedtuple('ModelReturn', ['loss', 'tb_dict', 'disp_dict'])
 
     def model_func(model, batch_dict):
-        load_data_to_gpu(batch_dict)
+        device = torch.cuda.current_device()
+        load_data_to_gpu(batch_dict, device=device)
         ret_dict, tb_dict, disp_dict = model(batch_dict)
 
         loss = ret_dict['loss'].mean()
