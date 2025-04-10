@@ -64,8 +64,17 @@ def parse_config():
     return args, cfg
 
 
-def main():
+def train_loop(init_launch=True, learning_rate=None, optimizer=None):
     args, cfg = parse_config()
+    # Modify cfg parameters from search
+    if learning_rate!=None:
+        cfg.OPTIMIZATION.LR = learning_rate
+    args.extra_tag += "LR%0.6f" % cfg.OPTIMIZATION.LR 
+    
+    if optimizer!=None:
+        cfg.OPTIMIZATION.OPTIMIZER = optimizer
+    args.extra_tag += "OPT%s" % cfg.OPTIMIZATION.OPTIMIZER
+    
     if args.launcher == 'none':
         dist_train = False
         total_gpus = 1
@@ -153,6 +162,20 @@ def main():
                 except:
                     ckpt_list = ckpt_list[:-1]
 
+    # Freeze model weights for non-head parameters
+    if cfg.get('FINETUNE', None) and cfg.get('FINETUNE', None)['STAGE']=='head':
+        print("Freezing model backbone weights...")
+        head_layers = ['point_head', 'roi_head', 'dense_head']
+        for name, param in model.named_parameters():
+            name_parent = name.split('.')[0]
+            if name_parent not in head_layers:
+                param.requires_grad = False
+            else:
+                param.requires_grad = True
+
+        for name, param in model.named_parameters():
+            print("Name %s requires grad %s" % (name, param.requires_grad))
+
     model.train()  # before wrap to DistributedDataParallel to support fixed some parameters
     if dist_train:
         model = nn.parallel.DistributedDataParallel(model, device_ids=[cfg.LOCAL_RANK % torch.cuda.device_count()])
@@ -222,6 +245,67 @@ def main():
     logger.info('**********************End evaluation %s/%s(%s)**********************' %
                 (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))
     # """
+
+    
+    
+
+def main():
+    args, cfg = parse_config()
+    
+    if cfg.get('FINETUNE', None) and cfg.get('FINETUNE', None)['STAGE']!='scratch':
+        head_stage = cfg.get('FINETUNE', None)['STAGE']=='head'
+        full_stage = cfg.get('FINETUNE', None)['STAGE']=='full'
+        headfull_stage = cfg.get('FINETUNE', None)['STAGE']=='headfull'
+        dolr_search = cfg.get('FINETUNE', None).get('LR_SEARCH', False)
+
+        if head_stage:
+            # lr_search = [1e-2, 1e-3]
+            # opt_search = ["adam_onecycle", "adam", "sgd"]
+            # finetuning coda->waymo/nus is more sensitive to large grad updates
+            lr_search = [1e-2, 1e-3, 1e-4]
+            opt_search = ["adam_onecycle"]
+        elif full_stage: 
+            lr_search = [1e-2, 1e-3, 1e-4]
+            opt_search = ["adam_onecycle"]
+        elif headfull_stage:
+            # lr_search = [1e-2, 1e-3, 1e-4]
+            lr_search = [cfg.OPTIMIZATION.LR, 5e-2, 1e-3, 5e-4]
+            opt_search = ["adam_onecycle"]
+        init_launch = True
+
+        for lr in lr_search:
+            unstable_lr = False
+            for opt in opt_search:
+                try:
+                    train_loop(init_launch, lr, opt)
+                    init_launch = False
+                except NotImplementedError or AssertionError as e:
+                    unstable_lr = True
+                    print("Learning rate ", lr, " unstable for training, reducing by 10x...")
+
+            if not dolr_search and not unstable_lr:
+                print("Completed training with lr ", lr, " cleaning up...")
+                break
+    else:
+        print("Doing normal training with learning adaptation...")
+        init_launch = True
+        opt = "adam_onecycle" # Found through empirical testing
+        lr_search = [cfg.OPTIMIZATION.LR, 5e-2, 1e-3, 5e-4] # Start with user lr
+        dolr_search = cfg.get('FINETUNE', None).get('LR_SEARCH', False)
+        
+        for lr_idx, lr in enumerate(lr_search):
+            unstable_lr = False
+            try:
+                train_loop(init_launch, lr, opt)
+                init_launch = False
+            except NotImplementedError or AssertionError as e:
+                unstable_lr = True
+                next_lr = lr_search[lr_idx+1] if lr_idx < len(lr_search) else -1
+                print(f'Learning rate ", lr, " unstable for training, reducing LR to {next_lr}...')
+
+            if not dolr_search and not unstable_lr:
+                print("Completed training with lr ", lr, " cleaning up...")
+                break
 
 
 if __name__ == '__main__':

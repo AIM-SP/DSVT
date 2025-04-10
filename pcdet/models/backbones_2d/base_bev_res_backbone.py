@@ -4,6 +4,11 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
+np.bool = bool
+np.int = int
+np.float = float
+np.object = object
+np.str = str
 
 class BasicBlock(nn.Module):
     expansion: int = 1

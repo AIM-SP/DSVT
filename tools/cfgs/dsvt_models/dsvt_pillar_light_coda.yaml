@@ -61,7 +61,7 @@ MODEL:
     WITH_DISTANCE: False
     USE_ABSLOTE_XYZ: True
     USE_NORM: True
-    NUM_FILTERS: [ 192, 192 ]
+    NUM_FILTERS: [ 128, 128 ]
 
   BACKBONE_3D:
     NAME: DSVT
@@ -69,18 +69,18 @@ MODEL:
       # you need specify sparse_shape and window_shape carefully to ensure alignment with the settings of POINT_CLOUD_RANGE and VOXEL_SIZE
       sparse_shape: [720, 720, 1]
       downsample_stride: [[1, 1, 4], [1, 1, 4], [1, 1, 2]]
-      d_model: [192, 192, 192, 192]
-      set_info: [[48, 1], [48, 1], [48, 1], [48, 1]]
-      window_shape: [[12, 12, 1], [12, 12, 1], [12, 12, 1], [12, 12, 1]]
+      d_model: [128, 128, 128, 128] 
+      set_info: [[32, 1], [32, 1], [32, 1], [32, 1]]
+      window_shape: [[8, 8, 1], [8, 8, 1], [8, 8, 1], [8, 8, 1]]
       hybrid_factor: [2, 2, 1] # x, y, z
       shifts_list: [[[0, 0, 0], [6, 6, 0]], [[0, 0, 0], [6, 6, 0]], [[0, 0, 0], [6, 6, 0]], [[0, 0, 0], [6, 6, 0]]]
       normalize_pos: False
     
     block_name: ['DSVTBlock','DSVTBlock','DSVTBlock','DSVTBlock']
     set_info: [[48, 1], [48, 1], [48, 1], [48, 1]]
-    d_model: [192, 192, 192, 192]
-    nhead: [8, 8, 8, 8]
-    dim_feedforward: [384, 384, 384, 384]
+    d_model: [128, 128, 128, 128]
+    nhead: [4, 4, 4, 4]
+    dim_feedforward: [256, 256, 256, 256]
     dropout: 0.0 
     activation: gelu
     reduction_type: 'attention'
@@ -91,15 +91,15 @@ MODEL:
   MAP_TO_BEV:
     NAME: PointPillarScatter3d
     INPUT_SHAPE: [720, 720, 1]
-    NUM_BEV_FEATURES: 192
+    NUM_BEV_FEATURES: 128
 
   BACKBONE_2D:
     NAME: BaseBEVResBackbone
     LAYER_NUMS: [ 1, 2, 2 ]
     LAYER_STRIDES: [ 1, 2, 2 ]
-    NUM_FILTERS: [ 128, 128, 256 ]
+    NUM_FILTERS:  [64, 64, 128] 
     UPSAMPLE_STRIDES: [ 1, 2, 4 ]
-    NUM_UPSAMPLE_FILTERS: [ 128, 128, 128 ]
+    NUM_UPSAMPLE_FILTERS: [64, 64, 64] 
 
   DENSE_HEAD:
     NAME: CenterHead
@@ -163,8 +163,8 @@ MODEL:
 
 
 OPTIMIZATION:
-  BATCH_SIZE_PER_GPU: 6
-  NUM_EPOCHS: 150
+  BATCH_SIZE_PER_GPU: 9
+  NUM_EPOCHS: 100
 
   OPTIMIZER: adam_onecycle
   LR: 0.001
