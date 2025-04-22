@@ -59,17 +59,19 @@ def annealing_cos(start, end, pct):
 
 class OneCycle(LRSchedulerStep):
     def __init__(self, fai_optimizer, total_step, lr_max, moms, div_factor,
-                 pct_start):
+                 pct_start, final_div_factor=1e4):
         self.lr_max = lr_max
         self.moms = moms
         self.div_factor = div_factor
         self.pct_start = pct_start
+        self.final_div_factor = final_div_factor
+        
         a1 = int(total_step * self.pct_start)
         a2 = total_step - a1
         low_lr = self.lr_max / self.div_factor
         lr_phases = ((0, partial(annealing_cos, low_lr, self.lr_max)),
                      (self.pct_start,
-                      partial(annealing_cos, self.lr_max, low_lr / 1e4)))
+                      partial(annealing_cos, self.lr_max, low_lr / final_div_factor)))
         mom_phases = ((0, partial(annealing_cos, *self.moms)),
                       (self.pct_start, partial(annealing_cos,
                                                *self.moms[::-1])))

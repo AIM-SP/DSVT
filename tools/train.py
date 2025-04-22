@@ -265,6 +265,7 @@ def main():
             lr_search = [1e-2, 1e-3, 1e-4]
             opt_search = ["adam_onecycle"]
         elif full_stage: 
+            print(f'Using optimizer: {cfg.OPTIMIZATION.OPTIMIZER}')
             lr_search = [1e-2, 1e-3, 1e-4]
             opt_search = ["adam_onecycle"]
         elif headfull_stage:

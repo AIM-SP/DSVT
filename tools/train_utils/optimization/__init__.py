@@ -49,7 +49,7 @@ def build_scheduler(optimizer, total_iters_each_epoch, total_epochs, last_epoch,
     total_steps = total_iters_each_epoch * total_epochs
     if optim_cfg.OPTIMIZER == 'adam_onecycle':
         lr_scheduler = OneCycle(
-            optimizer, total_steps, optim_cfg.LR, list(optim_cfg.MOMS), optim_cfg.DIV_FACTOR, optim_cfg.PCT_START
+            optimizer, total_steps, optim_cfg.LR, list(optim_cfg.MOMS), optim_cfg.DIV_FACTOR, optim_cfg.PCT_START, final_div_factor=getattr(optim_cfg, 'FINAL_DIV_FACTOR', 1e4)
         )
     else:
         lr_scheduler = lr_sched.LambdaLR(optimizer, lr_lbmd, last_epoch=last_epoch)

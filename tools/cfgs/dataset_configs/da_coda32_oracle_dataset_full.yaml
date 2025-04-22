@@ -1,7 +1,7 @@
 DATASET: 'CODataset'
 DATA_PATH: '../data/coda32_allclass_full'
 
-POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+POINT_CLOUD_RANGE: [-54.0, -54.0, -3.0, 54.0, 54.0, 5.0]
 
 DATA_SPLIT: {
     'train': train,
@@ -53,7 +53,8 @@ DATA_PROCESSOR:
       }
 
     - NAME: transform_points_to_voxels
-      VOXEL_SIZE: [0.1, 0.1, 0.15]
+      # VOXEL_SIZE: [0.1, 0.1, 0.15]
+      VOXEL_SIZE: [0.3, 0.3, 8.0]
       MAX_POINTS_PER_VOXEL: 5
       MAX_NUMBER_OF_VOXELS: {
         'train': 80000,
@@ -64,5 +65,5 @@ TEST:
     BOX_FILTER: {
         'USE_IMAGE_AREA_FILTER': True,
         'FOV_FILTER': False,
-        'LIMIT_RANGE': [-75.2, -75.2, -2, 75.2, 75.2, 4]
+        'LIMIT_RANGE': [-54.0, -54.0, -3.0, 54.0, 54.0, 5.0]
     }

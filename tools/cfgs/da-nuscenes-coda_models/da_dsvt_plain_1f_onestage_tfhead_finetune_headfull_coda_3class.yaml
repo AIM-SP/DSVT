@@ -3,7 +3,7 @@ CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_full.yaml
 
-    POINT_CLOUD_RANGE: [-54.0, -54.0, -5.0, 54.0, 54.0, 3.0]
+    POINT_CLOUD_RANGE: [-54.0, -54.0, -3.0, 54.0, 54.0, 5.0]
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
@@ -15,17 +15,24 @@ DATA_CONFIG:
               DB_INFO_PATH:
                 - coda_dbinfos_train.pkl
               PREPARE: {
-                filter_by_min_points: ['Car:5', 'Pedestrian:5', 'Cyclist:5'],
+                filter_by_min_points: ['Car:20', 'Pedestrian:20', 'Cyclist:20'],
                 filter_by_difficulty: [-1],
               }
-              SAMPLE_GROUPS: ['Car:15', 'Pedestrian:15', 'Cyclist:30']
+              SAMPLE_GROUPS: ['Car:36', 'Pedestrian:24', 'Cyclist:45']
               NUM_POINT_FEATURES: 4
               DATABASE_WITH_FAKELIDAR: False
               REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
               LIMIT_WHOLE_SCENE: True
 
+            # - NAME: random_object_scaling
+            #   SCALE_UNIFORM_NOISE: [0.9, 1.1]
+
+            # - NAME: random_object_rotation
+            #   ROT_PROB: 1.0
+            #   ROT_UNIFORM_NOISE: [-0.78539816, 0.78539816]
+
             - NAME: random_world_flip
-              ALONG_AXIS_LIST: ['x']
+              ALONG_AXIS_LIST: ['x', 'y']
 
             - NAME: random_world_rotation
               WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
@@ -33,12 +40,32 @@ DATA_CONFIG:
             - NAME: random_world_scaling
               WORLD_SCALE_RANGE: [0.95, 1.05]
 
-            - NAME: random_local_pyramid_aug
-              DROP_PROB: 0.25
-              SPARSIFY_PROB: 0.05
-              SPARSIFY_MAX_NUM: 50
-              SWAP_PROB: 0.1
-              SWAP_MAX_NUM: 50
+
+    # DATA_AUGMENTOR:
+    #     DISABLE_AUG_LIST: ['placeholder']
+    #     AUG_CONFIG_LIST:
+    #         - NAME: gt_sampling
+    #           DB_INFO_PATH:
+    #             - coda_dbinfos_train.pkl
+    #           PREPARE: {
+    #             filter_by_min_points: ['Car:5', 'Pedestrian:5', 'Cyclist:5'],
+    #             filter_by_difficulty: [-1],
+    #           }
+    #           SAMPLE_GROUPS: ['Car:20', 'Pedestrian:12', 'Cyclist:30']
+    #           NUM_POINT_FEATURES: 4
+    #           DATABASE_WITH_FAKELIDAR: False
+    #           REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
+    #           LIMIT_WHOLE_SCENE: True
+
+    #         - NAME: random_world_flip
+    #           ALONG_AXIS_LIST: ['x']
+
+    #         - NAME: random_world_rotation
+    #           WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
+
+    #         - NAME: random_world_scaling
+    #           WORLD_SCALE_RANGE: [0.95, 1.05]
+
 
     DATA_PROCESSOR:
     -   NAME: mask_points_and_boxes_outside_range
@@ -125,7 +152,6 @@ MODEL:
           'dim': {'out_channels': 3, 'num_conv': 2},
           'rot': {'out_channels': 2, 'num_conv': 2},
           # 'iou': {'out_channels': 1, 'num_conv': 2},
-
       }
 
     TARGET_ASSIGNER_CONFIG:
@@ -140,12 +166,19 @@ MODEL:
   
     LOSS_CONFIG:
       LOSS_WEIGHTS: {
-              'cls_weight': 1.0,
-              'bbox_weight': 0.25,
+              'cls_weight': 0.70,
+              'bbox_weight': 0.50,
               'hm_weight': 1.0,
               'loss_iou_rescore_weight': 0.5,
               'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
           }
+      # LOSS_WEIGHTS: {
+      #         'cls_weight': 1.0,
+      #         'bbox_weight': 0.25,
+      #         'hm_weight': 1.0,
+      #         'loss_iou_rescore_weight': 0.5,
+      #         'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+      #     }
       LOSS_CLS:
         use_sigmoid: True
         gamma: 2.0
@@ -153,7 +186,7 @@ MODEL:
 
     POST_PROCESSING:
       SCORE_THRESH: 0.0
-      POST_CENTER_RANGE: [-54.0, -54.0, -5.0, 54.0, 54.0, 3.0]
+      POST_CENTER_RANGE: [-54.0, -54.0, -3.0, 54.0, 54.0, 5.0]
       USE_IOU_TO_RECTIFY_SCORE: True 
       IOU_RECTIFIER: [0.5]
       NMS_CONFIG:
@@ -171,19 +204,20 @@ MODEL:
 
 
 FINETUNE:
-    STAGE: headfull
+    STAGE: scratch
 
 OPTIMIZATION:
-  BATCH_SIZE_PER_GPU: 12
+  BATCH_SIZE_PER_GPU: 2
   NUM_EPOCHS: 20
 
   OPTIMIZER: adam_onecycle
-  LR: 0.01 #
+  LR: 0.005 #
   WEIGHT_DECAY: 0.05
   MOMENTUM: 0.9
 
   MOMS: [0.95, 0.85]
-  PCT_START: 0.4
+  PCT_START: 0.2
+  # PCT_START: 0.4
   DIV_FACTOR: 10
   DECAY_STEP_LIST: [35, 45]
   LR_DECAY: 0.1
@@ -194,3 +228,8 @@ OPTIMIZATION:
 
   GRAD_NORM_CLIP: 35
   LOSS_SCALE_FP16: 4.0
+
+# HOOK:
+#   DisableAugmentationHook:
+#     DISABLE_AUG_LIST: ['gt_sampling']
+#     NUM_LAST_EPOCHS: 4
