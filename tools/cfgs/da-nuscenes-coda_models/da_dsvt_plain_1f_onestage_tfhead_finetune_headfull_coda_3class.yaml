@@ -18,7 +18,7 @@ DATA_CONFIG:
                 filter_by_min_points: ['Car:20', 'Pedestrian:20', 'Cyclist:20'],
                 filter_by_difficulty: [-1],
               }
-              SAMPLE_GROUPS: ['Car:36', 'Pedestrian:24', 'Cyclist:45']
+              SAMPLE_GROUPS: ['Car:26', 'Pedestrian:18', 'Cyclist:32']
               NUM_POINT_FEATURES: 4
               DATABASE_WITH_FAKELIDAR: False
               REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
@@ -208,7 +208,7 @@ FINETUNE:
 
 OPTIMIZATION:
   BATCH_SIZE_PER_GPU: 2
-  NUM_EPOCHS: 20
+  NUM_EPOCHS: 50
 
   OPTIMIZER: adam_onecycle
   LR: 0.005 #
@@ -216,7 +216,7 @@ OPTIMIZATION:
   MOMENTUM: 0.9
 
   MOMS: [0.95, 0.85]
-  PCT_START: 0.2
+  PCT_START: 0.1
   # PCT_START: 0.4
   DIV_FACTOR: 10
   DECAY_STEP_LIST: [35, 45]
