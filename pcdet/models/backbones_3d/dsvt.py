@@ -371,7 +371,7 @@ class DSVT_TrtEngine(nn.Module):
 
 
     def forward(self, batch_dict):
-
+        print("[INFO] Using TensorRT engine for DSVT backbone!")
         voxel_info = self.input_layer(batch_dict)
 
         voxel_feat = voxel_info['voxel_feats_stage0']
