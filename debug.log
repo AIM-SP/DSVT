@@ -1,0 +1,76 @@
+&&&& RUNNING TensorRT.trtexec [TensorRT v8502] # trtexec --onnx=./deploy_files/dsvt.onnx --saveEngine=./deploy_files/dsvt.engine --memPoolSize=workspace:4096 --verbose --buildOnly --device=1 --fp16 --tacticSources=+CUDNN,+CUBLAS,-CUBLAS_LT,+EDGE_MASK_CONVOLUTIONS --minShapes=src:3000x192,set_voxel_inds_tensor_shift_0:2x170x36,set_voxel_inds_tensor_shift_1:2x100x36,set_voxel_masks_tensor_shift_0:2x170x36,set_voxel_masks_tensor_shift_1:2x100x36,pos_embed_tensor:4x2x3000x192 --optShapes=src:20000x192,set_voxel_inds_tensor_shift_0:2x1000x36,set_voxel_inds_tensor_shift_1:2x700x36,set_voxel_masks_tensor_shift_0:2x1000x36,set_voxel_masks_tensor_shift_1:2x700x36,pos_embed_tensor:4x2x20000x192 --maxShapes=src:35000x192,set_voxel_inds_tensor_shift_0:2x1500x36,set_voxel_inds_tensor_shift_1:2x1200x36,set_voxel_masks_tensor_shift_0:2x1500x36,set_voxel_masks_tensor_shift_1:2x1200x36,pos_embed_tensor:4x2x35000x192
+[05/08/2025-06:38:53] [I] === Model Options ===
+[05/08/2025-06:38:53] [I] Format: ONNX
+[05/08/2025-06:38:53] [I] Model: ./deploy_files/dsvt.onnx
+[05/08/2025-06:38:53] [I] Output:
+[05/08/2025-06:38:53] [I] === Build Options ===
+[05/08/2025-06:38:53] [I] Max batch: explicit batch
+[05/08/2025-06:38:53] [I] Memory Pools: workspace: 4096 MiB, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default
+[05/08/2025-06:38:53] [I] minTiming: 1
+[05/08/2025-06:38:53] [I] avgTiming: 8
+[05/08/2025-06:38:53] [I] Precision: FP32+FP16
+[05/08/2025-06:38:53] [I] LayerPrecisions: 
+[05/08/2025-06:38:53] [I] Calibration: 
+[05/08/2025-06:38:53] [I] Refit: Disabled
+[05/08/2025-06:38:53] [I] Sparsity: Disabled
+[05/08/2025-06:38:53] [I] Safe mode: Disabled
+[05/08/2025-06:38:53] [I] DirectIO mode: Disabled
+[05/08/2025-06:38:53] [I] Restricted mode: Disabled
+[05/08/2025-06:38:53] [I] Build only: Enabled
+[05/08/2025-06:38:53] [I] Save engine: ./deploy_files/dsvt.engine
+[05/08/2025-06:38:53] [I] Load engine: 
+[05/08/2025-06:38:53] [I] Profiling verbosity: 0
+[05/08/2025-06:38:53] [I] Tactic sources: cublas [ON], cublasLt [OFF], cudnn [ON], edge mask convolutions [ON], 
+[05/08/2025-06:38:53] [I] timingCacheMode: local
+[05/08/2025-06:38:53] [I] timingCacheFile: 
+[05/08/2025-06:38:53] [I] Heuristic: Disabled
+[05/08/2025-06:38:53] [I] Preview Features: Use default preview flags.
+[05/08/2025-06:38:53] [I] Input(s)s format: fp32:CHW
+[05/08/2025-06:38:53] [I] Output(s)s format: fp32:CHW
+[05/08/2025-06:38:53] [I] Input build shape: src=3000x192+20000x192+35000x192
+[05/08/2025-06:38:53] [I] Input build shape: set_voxel_inds_tensor_shift_0=2x170x36+2x1000x36+2x1500x36
+[05/08/2025-06:38:53] [I] Input build shape: set_voxel_inds_tensor_shift_1=2x100x36+2x700x36+2x1200x36
+[05/08/2025-06:38:53] [I] Input build shape: set_voxel_masks_tensor_shift_0=2x170x36+2x1000x36+2x1500x36
+[05/08/2025-06:38:53] [I] Input build shape: set_voxel_masks_tensor_shift_1=2x100x36+2x700x36+2x1200x36
+[05/08/2025-06:38:53] [I] Input build shape: pos_embed_tensor=4x2x3000x192+4x2x20000x192+4x2x35000x192
+[05/08/2025-06:38:53] [I] Input calibration shapes: model
+[05/08/2025-06:38:53] [I] === System Options ===
+[05/08/2025-06:38:53] [I] Device: 1
+[05/08/2025-06:38:53] [I] DLACore: 
+[05/08/2025-06:38:53] [I] Plugins:
+[05/08/2025-06:38:53] [I] === Inference Options ===
+[05/08/2025-06:38:53] [I] Batch: Explicit
+[05/08/2025-06:38:53] [I] Input inference shape: pos_embed_tensor=4x2x20000x192
+[05/08/2025-06:38:53] [I] Input inference shape: set_voxel_masks_tensor_shift_1=2x700x36
+[05/08/2025-06:38:53] [I] Input inference shape: set_voxel_masks_tensor_shift_0=2x1000x36
+[05/08/2025-06:38:53] [I] Input inference shape: set_voxel_inds_tensor_shift_1=2x700x36
+[05/08/2025-06:38:53] [I] Input inference shape: set_voxel_inds_tensor_shift_0=2x1000x36
+[05/08/2025-06:38:53] [I] Input inference shape: src=20000x192
+[05/08/2025-06:38:53] [I] Iterations: 10
+[05/08/2025-06:38:53] [I] Duration: 3s (+ 200ms warm up)
+[05/08/2025-06:38:53] [I] Sleep time: 0ms
+[05/08/2025-06:38:53] [I] Idle time: 0ms
+[05/08/2025-06:38:53] [I] Streams: 1
+[05/08/2025-06:38:53] [I] ExposeDMA: Disabled
+[05/08/2025-06:38:53] [I] Data transfers: Enabled
+[05/08/2025-06:38:53] [I] Spin-wait: Disabled
+[05/08/2025-06:38:53] [I] Multithreading: Disabled
+[05/08/2025-06:38:53] [I] CUDA Graph: Disabled
+[05/08/2025-06:38:53] [I] Separate profiling: Disabled
+[05/08/2025-06:38:53] [I] Time Deserialize: Disabled
+[05/08/2025-06:38:53] [I] Time Refit: Disabled
+[05/08/2025-06:38:53] [I] NVTX verbosity: 0
+[05/08/2025-06:38:53] [I] Persistent Cache Ratio: 0
+[05/08/2025-06:38:53] [I] Inputs:
+[05/08/2025-06:38:53] [I] === Reporting Options ===
+[05/08/2025-06:38:53] [I] Verbose: Enabled
+[05/08/2025-06:38:53] [I] Averages: 10 inferences
+[05/08/2025-06:38:53] [I] Percentiles: 90,95,99
+[05/08/2025-06:38:53] [I] Dump refittable layers:Disabled
+[05/08/2025-06:38:53] [I] Dump output: Disabled
+[05/08/2025-06:38:53] [I] Profile: Disabled
+[05/08/2025-06:38:53] [I] Export timing to JSON file: 
+[05/08/2025-06:38:53] [I] Export output to JSON file: 
+[05/08/2025-06:38:53] [I] Export profile to JSON file: 
+[05/08/2025-06:38:53] [I] 
+Cuda failure: invalid device ordinal

@@ -1,3 +1,4 @@
+import _init_path
 from pcdet.config import cfg, cfg_from_yaml_file
 from pcdet.models import build_network
 from pcdet.datasets import build_dataloader
@@ -13,7 +14,7 @@ from typing import Sequence, NamedTuple
 
 
 ####### load model #######
-cfg_file = "./cfgs/dsvt_models/dsvt_plain_1f_onestage.yaml"
+cfg_file = "/var/data/dsvt_results/da_dsvt_plain_1f_onestage_centerhead_pretrain_coda_3class/da_dsvt_plain_1f_onestage_centerhead_pretrain_coda_3class.yaml"
 cfg_from_yaml_file(cfg_file, cfg)
 if os.path.exists('./deploy_files')==False:
     os.mkdir('./deploy_files')
@@ -27,14 +28,14 @@ test_set, test_loader, sampler = build_dataloader(
 )
 
 model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=test_set)
-ckpt = "path to dsvt piller version ckpt"
+ckpt = "/var/data/dsvt_results/da_dsvt_plain_1f_onestage_centerhead_pretrain_coda_3class/ckpt/checkpoint_epoch_100.pth"
 model.load_params_from_file(filename=ckpt, logger=logger, to_cpu=False, pre_trained_path=None)
 model.eval()
 model.cuda()
 ####### load model #######
 
 ####### read input #######
-batch_dict = torch.load("path to batch_dict.pth", map_location="cuda")
+batch_dict = torch.load("batch_dict.pth", map_location="cuda")
 inputs = batch_dict
 ####### read input #######
 
@@ -228,7 +229,7 @@ with torch.no_grad():
         opset_version=14,
     )
     # test onnx
-    ort_session = ort.InferenceSession(onnx_path)
+    ort_session = ort.InferenceSession(onnx_path,providers=['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'])
     def to_numpy(tensor):
         return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
     

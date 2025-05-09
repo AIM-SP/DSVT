@@ -1,0 +1,28 @@
+2025-05-08 05:44:16,811   INFO  Loading Waymo dataset
+2025-05-08 05:44:16,818   INFO  Total skipped info 202
+2025-05-08 05:44:16,818   INFO  Total samples for Waymo dataset: 0
+2025-05-08 05:45:44,364   INFO  Loading CODa dataset
+2025-05-08 05:45:44,372   INFO  Total samples for CODa dataset: 272
+2025-05-08 05:45:46,003   INFO  ==> Loading parameters from checkpoint /var/data/dsvt_results/da_dsvt_plain_1f_onestage_centerhead_pretrain_coda_3class/ckpt/checkpoint_epoch_100.pth to GPU
+2025-05-08 05:45:46,084   INFO  ==> Checkpoint trained from version: pcdet+0.6.0++py54e6160
+2025-05-08 05:45:46,094   INFO  ==> Done (loaded 391/391)
+2025-05-08 06:08:18,282   INFO  Loading CODa dataset
+2025-05-08 06:08:18,290   INFO  Total samples for CODa dataset: 272
+2025-05-08 06:08:19,905   INFO  ==> Loading parameters from checkpoint /var/data/dsvt_results/da_dsvt_plain_1f_onestage_centerhead_pretrain_coda_3class/ckpt/checkpoint_epoch_100.pth to GPU
+2025-05-08 06:08:19,952   INFO  ==> Checkpoint trained from version: pcdet+0.6.0++py54e6160
+2025-05-08 06:08:19,961   INFO  ==> Done (loaded 391/391)
+2025-05-08 06:10:53,477   INFO  Loading CODa dataset
+2025-05-08 06:10:53,485   INFO  Total samples for CODa dataset: 272
+2025-05-08 06:10:55,102   INFO  ==> Loading parameters from checkpoint /var/data/dsvt_results/da_dsvt_plain_1f_onestage_centerhead_pretrain_coda_3class/ckpt/checkpoint_epoch_100.pth to GPU
+2025-05-08 06:10:55,149   INFO  ==> Checkpoint trained from version: pcdet+0.6.0++py54e6160
+2025-05-08 06:10:55,158   INFO  ==> Done (loaded 391/391)
+2025-05-08 06:15:25,977   INFO  Loading CODa dataset
+2025-05-08 06:15:25,985   INFO  Total samples for CODa dataset: 272
+2025-05-08 06:15:27,600   INFO  ==> Loading parameters from checkpoint /var/data/dsvt_results/da_dsvt_plain_1f_onestage_centerhead_pretrain_coda_3class/ckpt/checkpoint_epoch_100.pth to GPU
+2025-05-08 06:15:27,648   INFO  ==> Checkpoint trained from version: pcdet+0.6.0++py54e6160
+2025-05-08 06:15:27,657   INFO  ==> Done (loaded 391/391)
+2025-05-08 06:17:22,986   INFO  Loading CODa dataset
+2025-05-08 06:17:22,994   INFO  Total samples for CODa dataset: 272
+2025-05-08 06:17:24,611   INFO  ==> Loading parameters from checkpoint /var/data/dsvt_results/da_dsvt_plain_1f_onestage_centerhead_pretrain_coda_3class/ckpt/checkpoint_epoch_100.pth to GPU
+2025-05-08 06:17:24,659   INFO  ==> Checkpoint trained from version: pcdet+0.6.0++py54e6160
+2025-05-08 06:17:24,668   INFO  ==> Done (loaded 391/391)

@@ -58,6 +58,11 @@ def eval_one_epoch(cfg, args, model, dataloader, epoch_id, logger, dist_test=Fal
     for i, batch_dict in enumerate(dataloader):
         load_data_to_gpu(batch_dict)
 
+        if i == 0:
+            torch.save(batch_dict, "batch_dict.pth")
+            logger.info("Saved batch_dict.pth for ONNX export")
+
+
         if getattr(args, 'infer_time', False):
             start_time = time.time()
 
